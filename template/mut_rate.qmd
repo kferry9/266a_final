@@ -1,0 +1,123 @@
+Big question: Can we use dimethyl sulfate (DMS) structure probing techniques to accurately determine pair bases in *in vitro* transcribed human telomerasa RNA (hTR)?
+
+Data: Collected from hTR modified through DMS probing. DMS modification induces base mismatch modification during reverse-transcription which is mapped by Illumina short read sequencing.
+
+Data cleaning steps:
+
+```{r}
+seq_data <- read.csv("data/266_seq_data.csv")
+
+str(seq_data)
+
+summary(seq_data$mutation[seq_data$sample %in% "hTR_DMS_1" & seq_data$probe %in% "DMS_plus"])
+summary(seq_data$mutation[seq_data$sample %in% "hTR_DMS_2" & seq_data$probe %in% "DMS_plus"])
+summary(seq_data$mutation[seq_data$sample %in% "hTR_DMS_1" & seq_data$probe %in% "DMS_minus"])
+summary(seq_data$mutation[seq_data$sample %in% "hTR_DMS_2" & seq_data$probe %in% "DMS_minus"])
+
+zeros_vals <- seq_data[which(seq_data$raw_read_depth <= 0 | seq_data$effective_depth <= 0), ]   #mutation rate is mutations/read depth so read depths cannot be zero
+
+seq_data$raw_read_depth[seq_data$raw_read_depth <= 0] <- NA    #remove zero values
+seq_data$effective_depth[seq_data$effective_depth <= 0] <- NA   #remove zero values
+seq_data$raw_read_depth <- as.numeric(seq_data$raw_read_depth)
+NA_val <- sum(is.na(seq_data$raw_read_depth), is.na(seq_data$effective_depth))  #check how many NAs are found
+
+
+
+if (any(seq_data$raw_read_depth <= 0 | seq_data$effective_depth <= 0, na.rm = TRUE)) stop("zero values must be removed")
+
+str(seq_data)
+
+message("seq_data is cleaned")
+
+write.csv(seq_data, "results/seq_clean.csv", row.names = FALSE)
+seq_clean <- read.csv("results/seq_clean.csv")
+dim(seq_clean)
+
+```
+
+Determine mutation rate:
+
+```{r}
+source("scripts/clean_seq_data.R")
+
+#create two new columns with mutation rates
+
+seq_clean$raw_mut_rate <- seq_clean$mutations / seq_clean$raw_read_depth
+seq_clean$effective_mut_rate <- seq_clean$mutations / seq_clean$effective_depth
+
+```
+
+Histogram plots for mutation rates:
+
+```{r}
+source("scripts/clean_seq_data.R")
+source("Results/mut_rate.R")
+library(ggplot2)
+
+raw_mut <- ggplot(seq_clean, aes(x = raw_mut_rate, fill = sample)) + geom_histogram(bins = 120, position = "identity", alpha = 0.5) + coord_cartesian(xlim = c(0, 0.1)) + labs(x = "Raw mutation rate", y = "Nucleotide", title = "Raw Mutation Rates")
+
+raw_mut
+
+eff_mut <- ggplot(seq_clean, aes(x = effective_mut_rate, fill = sample)) + geom_histogram(bins = 200, position = "identity", alpha = 0.5) + coord_cartesian(xlim = c(0, 0.1)) + labs(x = "Effective mutation rate", y = "Nucleotide", title = "Effective Mutation Rates")
+eff_mut
+```
+
+![](Results/plot%2072.png)
+
+This plot plot shows distribution of the mutation rate calculated from the raw read depth data which is why I chose to plot this as a histogram.
+
+![](Results/plot%2073.png)
+
+Similarly, I plotted the rates calculated with the effective read depth, which is found by more stringent read filtering, as a histogram to represent the distribution for each nucleotide position.
+
+Linear regression correlations:
+
+```{r}
+source("scripts/clean_seq_data.R")
+source("Results/mut_rate.R")
+library(ggplot2)
+
+seq_clean$raw_DMS1_plus <- seq_clean$raw_mut_rate[seq_clean$sample %in% "hTR_DMS_1" & seq_clean$probe %in% "DMS_plus"]
+seq_clean$raw_DMS2_plus <- seq_clean$raw_mut_rate[seq_clean$sample %in% "hTR_DMS_2" & seq_clean$probe %in% "DMS_plus"]
+seq_clean$eff_DMS1_plus <- seq_clean$effective_mut_rate[seq_clean$sample %in% "hTR_DMS_1" & seq_clean$probe %in% "DMS_plus"]
+seq_clean$eff_DMS2_plus <- seq_clean$effective_mut_rate[seq_clean$sample %in% "hTR_DMS_2" & seq_clean$probe %in% "DMS_plus"]
+
+raw_corr_plus_plot <- ggplot(seq_clean, aes(x = raw_DMS1_plus, y = raw_DMS2_plus)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + labs(x = "Raw DMS 1 mutation rate", y = "Raw DMS 1 mutation rate", title = "Raw DMS correlation")
+
+raw_corr_plus_plot
+
+raw_plus_corr <- lm(raw_DMS1_plus ~ raw_DMS2_plus, data = seq_clean)
+coef(raw_plus_corr)
+summary(raw_plus_corr)
+
+eff_corr_plus_plot <- ggplot(seq_clean, aes(x = eff_DMS1_plus, y = eff_DMS2_plus)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + labs(x = "Effective DMS 1 mutation rate", y = "Effective DMS 1 mutation rate", title = "Effective DMS correlation")
+
+eff_corr_plus_plot
+
+eff_plus_corr <- lm(eff_DMS1_plus ~ eff_DMS2_plus, data = seq_clean)
+coef(eff_plus_corr)
+summary(eff_plus_corr)
+nobs(eff_plus_corr)
+
+raw_diag_df <- data.frame(raw_fitted = fitted(raw_plus_corr), raw_resid  = residuals(raw_plus_corr))
+
+raw_residual <- ggplot(raw_diag_df, aes(x = raw_fitted, y = raw_resid)) + geom_point() + geom_hline(yintercept = 0) + labs(x = "Fitted raw mutation rate", y = "Residual", title = "Raw read residuals")
+
+raw_residual
+
+eff_diag_df <- data.frame(eff_fitted = fitted(eff_plus_corr), eff_resid  = residuals(eff_plus_corr))
+
+eff_residual <- ggplot(eff_diag_df, aes(x = eff_fitted, y = eff_resid)) + geom_point() + geom_hline(yintercept = 0) + labs(x = "Fitted effective mutation rate", y = "Residual", title = "Effective read residuals")
+
+eff_residual
+```
+
+The correlation between replicates shown by the coefficient values was low for the raw DMS samples but higher for the effective DMS samples. Meaning the more stringent read filtering helped reduce the noise. I check this with residual plots which both showed points collecting mostly around 0.
+
+![](Results/plot%20110.png)
+
+![](Results/plot%20111.png)
+
+AI use:
+
+\- Tools used: Claude - What I used them for: helped to debug my plot code lines. - What I changed or rejected, and how I checked it: It helped me identify that the NA values in my cleaned data set caused rows to be dropped. I confirmed with nrow and fixed the issue.
