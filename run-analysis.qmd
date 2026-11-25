@@ -1,11 +1,67 @@
+---
+# Copy this file to the top folder of YOUR project as run-analysis.qmd,
+# then replace everything in <angle brackets>. Delete these comment lines.
+title: "266A Final Project"
+subtitle: "Big question: Can we use dimethyl sulfate (DMS) structure probing techniques to accurately determine pair bases in *in vitro* transcribed human telomerasa RNA (hTR)?"
+author: "Kimmy Ferry"
+date: today
+format:
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+    code-tools: true
+execute:
+  echo: true
+  warning: false
+---
+
+# The project at a glance
+
+**Question.**
+
 Big question: Can we use dimethyl sulfate (DMS) structure probing techniques to accurately determine pair bases in *in vitro* transcribed human telomerasa RNA (hTR)?
 
-Data: Collected from hTR modified through DMS probing. DMS modification induces base mismatch modification during reverse-transcription which is mapped by Illumina short read sequencing.
+**Data.**
+
+Collected from hTR modified through DMS probing. DMS modification induces base mismatch modification during reverse-transcription which is mapped by Illumina short read sequencing.
+
+| File in `data/raw/`         | Source (link)     | Format | License / terms |
+|-----------------------------|-------------------|--------|-----------------|
+| `data/raw/266_seq_data.csv` | Experimental data | CSV    | <license>       |
+
+**Folders.**
+
+```         
+266A_FINAL
+├── run-analysis.qmd   <- render this to run everything
+├── README.md          <- points here
+├── data/raw          <- never edited
+├── data/processed   <- written by the pipeline
+├── scripts/               <- one script per step
+└── output/            <- figures and tables
+```
+
+# Before you render (one time only)
+
+1.  Open this folder in Positron (*File → Open Folder*).
+2.  Install the exact package versions:
+
+```{r}
+#| label: restore
+#| eval: false
+renv::restore()
+```
+
+# Step 1: Import and clean
 
 Data cleaning steps:
 
 ```{r}
-seq_data <- read.csv("data/266_seq_data.csv")
+library("tidyverse")
+library("readr")
+
+seq_data <- read.csv("data/raw/266_seq_data.csv")
 
 str(seq_data)
 
@@ -29,13 +85,13 @@ str(seq_data)
 
 message("seq_data is cleaned")
 
-write.csv(seq_data, "results/seq_clean.csv", row.names = FALSE)
-seq_clean <- read.csv("results/seq_clean.csv")
+write.csv(seq_data, "data/processed/seq_clean.csv", row.names = FALSE)
+seq_clean <- read.csv("data/processed/seq_clean.csv")
 dim(seq_clean)
 
 ```
 
-Determine mutation rate:
+# Step 2: Process data
 
 ```{r}
 source("scripts/clean_seq_data.R")
@@ -47,34 +103,37 @@ seq_clean$effective_mut_rate <- seq_clean$mutations / seq_clean$effective_depth
 
 ```
 
-Histogram plots for mutation rates:
+# Step 3: Visualize data
 
 ```{r}
 source("scripts/clean_seq_data.R")
-source("Results/mut_rate.R")
+source("scripts/mut_rate.R")
 library(ggplot2)
 
+#| label: hist-raw
 raw_mut <- ggplot(seq_clean, aes(x = raw_mut_rate, fill = sample)) + geom_histogram(bins = 120, position = "identity", alpha = 0.5) + coord_cartesian(xlim = c(0, 0.1)) + labs(x = "Raw mutation rate", y = "Nucleotide", title = "Raw Mutation Rates")
 
 raw_mut
 
+#| label: hist-eff
 eff_mut <- ggplot(seq_clean, aes(x = effective_mut_rate, fill = sample)) + geom_histogram(bins = 200, position = "identity", alpha = 0.5) + coord_cartesian(xlim = c(0, 0.1)) + labs(x = "Effective mutation rate", y = "Nucleotide", title = "Effective Mutation Rates")
 eff_mut
 ```
 
-![](Results/plot%2072.png)
+@hist-raw
 
 This plot plot shows distribution of the mutation rate calculated from the raw read depth data which is why I chose to plot this as a histogram.
 
-![](Results/plot%2073.png)
+@hist-eff
 
 Similarly, I plotted the rates calculated with the effective read depth, which is found by more stringent read filtering, as a histogram to represent the distribution for each nucleotide position.
 
 Linear regression correlations:
 
 ```{r}
+
 source("scripts/clean_seq_data.R")
-source("Results/mut_rate.R")
+source("scripts/mut_rate.R")
 library(ggplot2)
 
 seq_clean$raw_DMS1_plus <- seq_clean$raw_mut_rate[seq_clean$sample %in% "hTR_DMS_1" & seq_clean$probe %in% "DMS_plus"]
@@ -82,6 +141,7 @@ seq_clean$raw_DMS2_plus <- seq_clean$raw_mut_rate[seq_clean$sample %in% "hTR_DMS
 seq_clean$eff_DMS1_plus <- seq_clean$effective_mut_rate[seq_clean$sample %in% "hTR_DMS_1" & seq_clean$probe %in% "DMS_plus"]
 seq_clean$eff_DMS2_plus <- seq_clean$effective_mut_rate[seq_clean$sample %in% "hTR_DMS_2" & seq_clean$probe %in% "DMS_plus"]
 
+#| label: corr-raw
 raw_corr_plus_plot <- ggplot(seq_clean, aes(x = raw_DMS1_plus, y = raw_DMS2_plus)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + labs(x = "Raw DMS 1 mutation rate", y = "Raw DMS 1 mutation rate", title = "Raw DMS correlation")
 
 raw_corr_plus_plot
@@ -90,6 +150,7 @@ raw_plus_corr <- lm(raw_DMS1_plus ~ raw_DMS2_plus, data = seq_clean)
 coef(raw_plus_corr)
 summary(raw_plus_corr)
 
+#| label: corr-eff
 eff_corr_plus_plot <- ggplot(seq_clean, aes(x = eff_DMS1_plus, y = eff_DMS2_plus)) + geom_point() + geom_smooth(method = "lm", se = FALSE) + labs(x = "Effective DMS 1 mutation rate", y = "Effective DMS 1 mutation rate", title = "Effective DMS correlation")
 
 eff_corr_plus_plot
@@ -114,10 +175,23 @@ eff_residual
 
 The correlation between replicates shown by the coefficient values was low for the raw DMS samples but higher for the effective DMS samples. Meaning the more stringent read filtering helped reduce the noise. I check this with residual plots which both showed points collecting mostly around 0.
 
-![](Results/plot%20110.png)
+# 
 
-![](Results/plot%20111.png)
+# How to render, and how to check it is reproducible
 
-AI use:
+``` bash
+quarto render run-analysis.qmd
+```
+
+Delete `data/processed/` and `output/` contents, restart R, and render again: everything comes back.
+
+# Computational environment
+
+```{r}
+#| label: session-info
+sessionInfo()
+```
+
+# AI use
 
 \- Tools used: Claude - What I used them for: helped to debug my plot code lines. - What I changed or rejected, and how I checked it: It helped me identify that the NA values in my cleaned data set caused rows to be dropped. I confirmed with nrow and fixed the issue.

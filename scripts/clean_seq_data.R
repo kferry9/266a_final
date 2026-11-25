@@ -1,3 +1,6 @@
+library("tidyverse")
+library("readr")
+
 seq_data <- read.csv("data/raw/266_seq_data.csv")
 
 str(seq_data)
