@@ -2218,8 +2218,10 @@ vertical-align: -.125em;
   <li><a href="#step-1-import-and-clean" id="toc-step-1-import-and-clean" class="nav-link" data-scroll-target="#step-1-import-and-clean"><span class="header-section-number">3</span> Step 1: Import and clean</a></li>
   <li><a href="#step-2-process-data" id="toc-step-2-process-data" class="nav-link" data-scroll-target="#step-2-process-data"><span class="header-section-number">4</span> Step 2: Process data</a></li>
   <li><a href="#step-3-visualize-data" id="toc-step-3-visualize-data" class="nav-link" data-scroll-target="#step-3-visualize-data"><span class="header-section-number">5</span> Step 3: Visualize data</a></li>
-  <li><a href="#how-to-render-and-how-to-check-it-is-reproducible" id="toc-how-to-render-and-how-to-check-it-is-reproducible" class="nav-link" data-scroll-target="#how-to-render-and-how-to-check-it-is-reproducible"><span class="header-section-number">6</span> How to render, and how to check it is reproducible</a></li>
-  <li><a href="#computational-environment" id="toc-computational-environment" class="nav-link" data-scroll-target="#computational-environment"><span class="header-section-number">7</span> Computational environment</a></li>
+  <li><a href="#section" id="toc-section" class="nav-link" data-scroll-target="#section"><span class="header-section-number">6</span> </a></li>
+  <li><a href="#how-to-render-and-how-to-check-it-is-reproducible" id="toc-how-to-render-and-how-to-check-it-is-reproducible" class="nav-link" data-scroll-target="#how-to-render-and-how-to-check-it-is-reproducible"><span class="header-section-number">7</span> How to render, and how to check it is reproducible</a></li>
+  <li><a href="#computational-environment" id="toc-computational-environment" class="nav-link" data-scroll-target="#computational-environment"><span class="header-section-number">8</span> Computational environment</a></li>
+  <li><a href="#ai-use" id="toc-ai-use" class="nav-link" data-scroll-target="#ai-use"><span class="header-section-number">9</span> AI use</a></li>
   </ul>
 </nav>
 </div>
@@ -2631,13 +2633,16 @@ F-statistic: 1.566e+04 on 1 and 1226 DF,  p-value: &lt; 2.2e-16</code></pre>
 </div>
 <p>The correlation between replicates shown by the coefficient values was low for the raw DMS samples but higher for the effective DMS samples. Meaning the more stringent read filtering helped reduce the noise. I check this with residual plots which both showed points collecting mostly around 0.</p>
 </section>
-<section id="how-to-render-and-how-to-check-it-is-reproducible" class="level1" data-number="6">
-<h1 data-number="6"><span class="header-section-number">6</span> How to render, and how to check it is reproducible</h1>
+<section id="section" class="level1" data-number="6">
+<h1 data-number="6"><span class="header-section-number">6</span> </h1>
+</section>
+<section id="how-to-render-and-how-to-check-it-is-reproducible" class="level1" data-number="7">
+<h1 data-number="7"><span class="header-section-number">7</span> How to render, and how to check it is reproducible</h1>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb44"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render run-analysis.qmd</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Delete <code>data/processed/</code> and <code>output/</code> contents, restart R, and render again: everything comes back.</p>
 </section>
-<section id="computational-environment" class="level1" data-number="7">
-<h1 data-number="7"><span class="header-section-number">7</span> Computational environment</h1>
+<section id="computational-environment" class="level1" data-number="8">
+<h1 data-number="8"><span class="header-section-number">8</span> Computational environment</h1>
 <div class="cell">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -2677,8 +2682,15 @@ loaded via a namespace (and not attached):
 [41] htmltools_0.5.9   </code></pre>
 </div>
 </div>
-<p>AI use:</p>
-<p>- Tools used: Claude - What I used them for: helped to debug my plot code lines. - What I changed or rejected, and how I checked it: It helped me identify that the NA values in my cleaned data set caused rows to be dropped. I confirmed with nrow and fixed the issue.</p>
+</section>
+<section id="ai-use" class="level1" data-number="9">
+<h1 data-number="9"><span class="header-section-number">9</span> AI use</h1>
+<p>Tools used:</p>
+<p>Claude:</p>
+<p>-What I used them for: helped to debug my plot code lines.</p>
+<p>-Help with formatting of readme files.</p>
+<p>What I changed or rejected, and how I checked it:</p>
+<p>It helped me identify that the NA values in my cleaned data set caused rows to be dropped. I confirmed with nrow and fixed the issue.</p>
 <!-- -->
 
 </section>
@@ -3388,24 +3400,36 @@ loaded via a namespace (and not attached):
 <span id="cb47-184"><a href="#cb47-184" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb47-185"><a href="#cb47-185" aria-hidden="true" tabindex="-1"></a>The correlation between replicates shown by the coefficient values was low for the raw DMS samples but higher for the effective DMS samples. Meaning the more stringent read filtering helped reduce the noise. I check this with residual plots which both showed points collecting mostly around 0.</span>
 <span id="cb47-186"><a href="#cb47-186" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-187"><a href="#cb47-187" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to render, and how to check it is reproducible</span></span>
+<span id="cb47-187"><a href="#cb47-187" aria-hidden="true" tabindex="-1"></a><span class="fu"># </span></span>
 <span id="cb47-188"><a href="#cb47-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-189"><a href="#cb47-189" aria-hidden="true" tabindex="-1"></a><span class="in">``` bash</span></span>
-<span id="cb47-190"><a href="#cb47-190" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render run-analysis.qmd</span>
-<span id="cb47-191"><a href="#cb47-191" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb47-192"><a href="#cb47-192" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-193"><a href="#cb47-193" aria-hidden="true" tabindex="-1"></a>Delete <span class="in">`data/processed/`</span> and <span class="in">`output/`</span> contents, restart R, and render again: everything comes back.</span>
+<span id="cb47-189"><a href="#cb47-189" aria-hidden="true" tabindex="-1"></a><span class="fu"># How to render, and how to check it is reproducible</span></span>
+<span id="cb47-190"><a href="#cb47-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-191"><a href="#cb47-191" aria-hidden="true" tabindex="-1"></a><span class="in">``` bash</span></span>
+<span id="cb47-192"><a href="#cb47-192" aria-hidden="true" tabindex="-1"></a><span class="ex">quarto</span> render run-analysis.qmd</span>
+<span id="cb47-193"><a href="#cb47-193" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-194"><a href="#cb47-194" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-195"><a href="#cb47-195" aria-hidden="true" tabindex="-1"></a><span class="fu"># Computational environment</span></span>
+<span id="cb47-195"><a href="#cb47-195" aria-hidden="true" tabindex="-1"></a>Delete <span class="in">`data/processed/`</span> and <span class="in">`output/`</span> contents, restart R, and render again: everything comes back.</span>
 <span id="cb47-196"><a href="#cb47-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-199"><a href="#cb47-199" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
-<span id="cb47-200"><a href="#cb47-200" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
-<span id="cb47-201"><a href="#cb47-201" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
-<span id="cb47-202"><a href="#cb47-202" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb47-203"><a href="#cb47-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-204"><a href="#cb47-204" aria-hidden="true" tabindex="-1"></a>AI use:</span>
+<span id="cb47-197"><a href="#cb47-197" aria-hidden="true" tabindex="-1"></a><span class="fu"># Computational environment</span></span>
+<span id="cb47-198"><a href="#cb47-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-201"><a href="#cb47-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{r}</span></span>
+<span id="cb47-202"><a href="#cb47-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: session-info</span></span>
+<span id="cb47-203"><a href="#cb47-203" aria-hidden="true" tabindex="-1"></a><span class="fu">sessionInfo</span>()</span>
+<span id="cb47-204"><a href="#cb47-204" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb47-205"><a href="#cb47-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb47-206"><a href="#cb47-206" aria-hidden="true" tabindex="-1"></a><span class="sc">\-</span> Tools used: Claude - What I used them for: helped to debug my plot code lines. - What I changed or rejected, and how I checked it: It helped me identify that the NA values in my cleaned data set caused rows to be dropped. I confirmed with nrow and fixed the issue.</span>
+<span id="cb47-206"><a href="#cb47-206" aria-hidden="true" tabindex="-1"></a><span class="fu"># AI use</span></span>
+<span id="cb47-207"><a href="#cb47-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-208"><a href="#cb47-208" aria-hidden="true" tabindex="-1"></a>Tools used:</span>
+<span id="cb47-209"><a href="#cb47-209" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-210"><a href="#cb47-210" aria-hidden="true" tabindex="-1"></a>Claude:</span>
+<span id="cb47-211"><a href="#cb47-211" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-212"><a href="#cb47-212" aria-hidden="true" tabindex="-1"></a>-What I used them for: helped to debug my plot code lines.</span>
+<span id="cb47-213"><a href="#cb47-213" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-214"><a href="#cb47-214" aria-hidden="true" tabindex="-1"></a>-Help with formatting of readme files.</span>
+<span id="cb47-215"><a href="#cb47-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-216"><a href="#cb47-216" aria-hidden="true" tabindex="-1"></a>What I changed or rejected, and how I checked it:</span>
+<span id="cb47-217"><a href="#cb47-217" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb47-218"><a href="#cb47-218" aria-hidden="true" tabindex="-1"></a>It helped me identify that the NA values in my cleaned data set caused rows to be dropped. I confirmed with nrow and fixed the issue.</span>
 </code></pre></div><button title="Copy to Clipboard" class="code-copy-button" data-in-quarto-modal><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

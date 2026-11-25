@@ -194,4 +194,14 @@ sessionInfo()
 
 # AI use
 
-\- Tools used: Claude - What I used them for: helped to debug my plot code lines. - What I changed or rejected, and how I checked it: It helped me identify that the NA values in my cleaned data set caused rows to be dropped. I confirmed with nrow and fixed the issue.
+Tools used:
+
+Claude:
+
+-What I used them for: helped to debug my plot code lines.
+
+-Help with formatting of readme files.
+
+What I changed or rejected, and how I checked it:
+
+It helped me identify that the NA values in my cleaned data set caused rows to be dropped. I confirmed with nrow and fixed the issue.
